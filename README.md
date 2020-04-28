@@ -1,12 +1,12 @@
 # Predicting Interview Attendance in India
-Given a real world set of data, can I build a model that can predict if an expected interviewee will actually show up. If so, what other data can we extrapolate from the model to inform interested parties.
+Given a real world set of data, can I build a model that can predict interview attendance in India. If so, what other data can we extrapolate from the model to inform interested parties.
 
 ## Data
-This Kaggle Dataset is a real collection of data collected by researchers in order to help employers, recruiters, and other interested parties predict if a candidate is likely to show up for their expected interview. The original data set contains 1,233 rows and 28 columns. The data set contains various features, such as the client and candidate locations, interview locations, various questions for the interviewee (ie can the client follow up with the candidate), the nature of the job, etc.
+This Kaggle Dataset is a real collection of data collected by researchers in order to help employers, recruiters, and other interested parties predict if a candidate is likely to show up for their expected interview. The original data set contains 1,233 rows and 28 columns. The dataset contains various features, such as the client and candidate locations, interview locations, various questions for the interviewee (i.e. can the client follow up with the candidate), the nature of the job, etc.
 
 Because this is a classification problem (predicting a '1' if the candidate will likely show up and a '0' if not), I foresaw a potential data cleaning issue. Each column contained many unique values, and when I created dummy variables without any feature engineering, the dataset exploded into thousands of columns. Therefore, I wanted to be very precise with eliminating features that were not going to help me predict.
 
-The first thing I did was convert the interview date to a date time object so I could extract the months and the day of the weeks. I also combined 7 yes or no questions that candidates had to answer regarding their interview process by summing the amount of yeses. I then changed any column that had a true/false or yes/no to 1's and 0's. I also made sure to carefully examine the unique values in every column since this dataset included information that was hand entered by the collector. There were various instances where cities were logged multiple times, but with different spellings or capitalizations. I aggregated this whenever I discovered it.
+The first thing I did was convert the interview date to a date time object so I could extract the months and the day of the weeks. I also combined 7 yes or no questions that candidates answered regarding their preparation and expectations for the interview. I then changed any column that had a true/false or yes/no to 1's and 0's. I also made sure to carefully examine the unique values in every column since this dataset included information that was hand entered by the collector. There were various instances where cities were logged multiple times, but with different spellings or capitalizations. I aggregated this whenever I discovered it.
 
 ## EDA
 Next, I decided that I wanted to group all the columns and sum the instances of observed attendance divided by expected attendance. This allowed me to visually view different features and see if there were variations across the unique features and their observed attendance percentages.
@@ -25,7 +25,7 @@ Because I didn't remove one dummy variable at the start from each feature, there
 
 For this case study, I decided to use precision as my metric which is defined at (True Positives)/(True Positives + False Positives). I thought carefully about each metric and the business implications associated with each one. 
 
-For example, if a recruiter is attempting to identify candidates unlikely to show up for an interview or relay information to an employer about who is likely to attend, a False Positive would mean they inaccurately predicted someone to show up for the interview when they ended up being a no show. This would cost the company money, since that time could have been used to do other things such as interview other candidates. I figured if we can reduce the amount of False Positives, that would help improve productivity for companies and allow recruiters to more accurately identify candidates who need reminders to follow up.
+A false positive means that recruiters/employers inaccurately predicted someone to show up for the interview when they ended up being a no show. This would cost the company money, since that time could have been used to do other things such as interview other candidates. I figured if we can reduce the amount of False Positives, that would help improve productivity for companies and allow recruiters to more accurately identify candidates who need reminders to follow up.
 
 The first model I decided to use was the Random Forest Classification because it is generally regarded as a good predictor in classification problems. I used a grid search in order to help identify the optimal hyper parameters.
 
@@ -45,7 +45,7 @@ While feature engineering my data and removing columns, I frequently updated and
 
 It appears that the Random Forest Classification model yields the best results, but all models predicted very similar results overall.
 
-Also, it appears that my models do a better job at minimizing false negatives (Recall). Recall is defined at (True Positives)/(True Positives + False Negatives). In this case, a False Negative would be identifying someone as unlikely to show up for their interview but then they show up. I don't think that this is the best metric to use because I believe that a company would always plan on their candidates showing up no matter what. A company's or recruiters' time would be better spent following up with candidates to remind them of their interviews or find out if they plan to not show up to the interview. I think it would be unwise for a company to predict that someone won't show up because if they do show up it would be very embarrassing for the company.
+Also, it appears that my models do a better job at minimizing false negatives (Recall). Recall is defined at (True Positives)/(True Positives + False Negatives). In this case, a false negative identifies someone as unlikely to show up for their interview but then they show up (false positive is the candidate is predicted to show up, but then they don't). I don't think that recall is the best metric to use because I believe that a company would always plan on their candidates showing up unless explicitly told that the candidate was going to cancel. I think it would be unwise for a company to plan their interview schedules based on predictions because if the candidate actually shows up then it would be very embarrassing for the company. 
 
 Overall, my model is better at minimizing false negatives (saying someone won't show up, but they do) than false positives (saying someone will show up, but they don't).
 
@@ -57,7 +57,7 @@ In addition to constructing a useful classification model for predictions, I hop
 
 ![Image](/images/screenshot_fi.png)
 
-Interestingly, the number of questions that candidates answered, the month, and the day of the week are the top three important features. All three of these are features that I extrapolated from the original data. Even more interesting, the number of questions that candidates answered was the most important feature by far.
+Interestingly, the number of questions that candidates answered, the month, and the day of the week are the top three important features. All three of these are features that I extrapolated from the original data. Even more interestingly, the number of questions that candidates answered 'yes' in their questionnaire was the most important feature by far.
 
 Here are the partial dependency plots for each of these three features. This helps us understand how each feature impacts observed attendance.
 
@@ -73,7 +73,7 @@ There is some variability during the time of the year. The partial dependency pl
 
 Also, a candidate is most likely to show up for an interview on a Monday, but least likely to show up on a Wednesday.
 
-Lastly, the benefit of using a decision tree is it adds interpretability. While the above graphs add more intuitive insight into important features, the decision tree is still interesting to view.
+Lastly, the benefit of using a decision tree is that it adds interpretability. While the above graphs add more intuitive insight into important features, the decision tree is still interesting to view.
 
 ![Image](/images/decisison_tree.png)
 
